@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  kafka-1:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka-1
+    environment:
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093"
+
+      # listeners
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-1:9092"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # KRaft cluster ID
+      CLUSTER_ID: "sNwQfKakQ0yX9VJH9AFsqw"
+
+      # REQUIRED to fix disconnect loops
+      KAFKA_CONTROLLER_QUORUM_REQUEST_TIMEOUT_MS: 20000
+      KAFKA_CONTROLLER_SESSION_TIMEOUT_MS: 20000
+      KAFKA_HEARTBEAT_INTERVAL_MS: 2000
+    networks:
+      - kafka-net
+
+  kafka-2:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka-2
+    environment:
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 2
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-2:9092"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      CLUSTER_ID: "sNwQfKakQ0yX9VJH9AFsqw"
+
+      # RECONNECT FIX
+      KAFKA_CONTROLLER_QUORUM_REQUEST_TIMEOUT_MS: 20000
+      KAFKA_CONTROLLER_SESSION_TIMEOUT_MS: 20000
+      KAFKA_HEARTBEAT_INTERVAL_MS: 2000
+    networks:
+      - kafka-net
+
+  kafka-3:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka-3
+    environment:
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 3
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-3:9092"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      CLUSTER_ID: "sNwQfKakQ0yX9VJH9AFsqw"
+
+      # RECONNECT FIX
+      KAFKA_CONTROLLER_QUORUM_REQUEST_TIMEOUT_MS: 20000
+      KAFKA_CONTROLLER_SESSION_TIMEOUT_MS: 20000
+      KAFKA_HEARTBEAT_INTERVAL_MS: 2000
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:
+    driver: bridge
